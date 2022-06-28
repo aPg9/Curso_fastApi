@@ -17,12 +17,12 @@ class Person(BaseModel):
     last_name: str
     age: int
     hair_color: Optional[str] = None
-    is_married: Optional[bool] =None
+    is_married: Optional[bool] = None
 
 
 @app.get("/")     #-----> Path opetation decorator
 def home():
-    return {"Hello": "World"}
+    return {"First API": "Congratulations"}
 
 # Request and Response Body
 
@@ -32,9 +32,9 @@ def create_person(person: Person = Body(...)):     #-----> Body es una clase de 
 
 # Validaciones Query Parameters
 
-@app.get("/person/detail?name")
+@app.get("/person/detail")
 def show_person(
-    name: Optional[str] = Query(default=None, min_length=1, max_length=50),
-    age: int = Query(... )
+    name: Optional[str] = Query(None, min_length=1, max_length=50),
+    age: str = Query(... )
 ):
     return {name: age}
