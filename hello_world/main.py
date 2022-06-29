@@ -109,21 +109,59 @@ class Person(BaseModel):
         default=None,
         example= "Black"
     )
+
     is_married: Optional[bool] = Field(
         default=None,
         example = False
     )
 
-    #class Config:
-    #    schema_extra = {
-    #        "example": {
-    #            "first_name": "Facundo",
-    #            "last_name": "García Martoni",
-    #            "age": 29,
-    #            "hair_color": "blonde",
-    #            "is_married": False,
-    #        }
-    #    }
+    password: str = Field(
+        ...,
+        min_length= 8 )
+
+class PersonOut(BaseModel):
+    first_name: str = Field(
+        ...,
+        min_length= 1,
+        max_length=50,
+        example = "Rogelio"
+    )
+
+    last_name: str = Field(
+        min_length= 1,
+        max_length=50,
+        example = "Juarez"
+    )
+
+    age: int = Field(
+        ...,
+        gt=0,
+        le=115,
+        example = "45"
+    )
+
+    birth_day: PastDate = Field(
+        ...,
+        example = "2002-11-24"
+    )
+
+    email: EmailStr = Field(
+        ...,
+    )
+
+    card: Card = Field(
+        ...,
+    )
+
+    hair_color: Optional[HairColor] = Field(
+        default=None,
+        example= "Black"
+    )
+
+    is_married: Optional[bool] = Field(
+        default=None,
+        example = False
+    )    
 
 
 @app.get("/")     #-----> Path opetation decorator
@@ -132,7 +170,7 @@ def home():
 
 # Request and Response Body
 
-@app.post("/person/new")
+@app.post("/person/new", response_model=PersonOut)
 def create_person(person: Person = Body(...)):     #-----> Body es una clase de FastApi que permite decir que un parametro que me llega es de tipo body; (...) parametro obligatorio en fastapi
     return person
 
