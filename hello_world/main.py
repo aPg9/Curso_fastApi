@@ -22,29 +22,65 @@ class HairColor(Enum):
     red = "red" 
 
 class Location(BaseModel):
-    city: str
-    state: str
-    country: str
+    city: str = Field(
+        ...,
+        min_length= 2,
+        max_length= 50,
+        example = "Montreal"
+    )
+    state: str = Field(
+        ...,
+        min_length= 2,
+        max_length= 50,
+        example= "Quebec"
+    )
+    country: str = Field(
+        ...,
+        min_length= 2,
+        max_length= 50,
+        example = "Canada"
+    )
 
 # Validaciones: Modelos
 class Person(BaseModel):
     first_name: str = Field(
         ...,
         min_length= 1,
-        max_length=50
+        max_length=50,
+        example = "Rogelio"
         )
     last_name: str = Field(
         min_length= 1,
-        max_length=50
+        max_length=50,
+        example = "Juarez"
     )
     age: int = Field(
         ...,
         gt=0,
-        le=115
+        le=115,
+        example = "45"
     )
-    hair_color: Optional[HairColor] = Field(default=None)
-    is_married: Optional[bool] = Field(default=None)
 
+    hair_color: Optional[HairColor] = Field(
+    default=None,
+    example= "Black"
+    )
+    is_married: Optional[bool] = Field(
+        default=None,
+        example = False
+    )
+
+    #class Config:
+    #    schema_extra = {
+    #        "example": {
+    #            "first_name": "Facundo",
+    #            "last_name": "García Martoni",
+    #            "age": 29,
+    #            "hair_color": "blonde",
+    #            "is_married": False,
+    #        }
+    #    }
+    
 
 @app.get("/")     #-----> Path opetation decorator
 def home():
