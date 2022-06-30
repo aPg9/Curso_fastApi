@@ -1,16 +1,12 @@
 #Python
-from datetime import date
 from typing import Optional
 from enum import Enum     #-----> Nos ayuda para crear enumeraciones de strings
-
 #Pydantic
-from pydantic import BaseModel, EmailStr, PastDate
-from pydantic import Field
-from pydantic.types import PaymentCardBrand, PaymentCardNumber, constr     #-----> Si funciona con tarjetas reales, desactivado
-
+from pydantic import BaseModel, EmailStr, PastDate, Field
+# from pydantic.types import PaymentCardBrand, PaymentCardNumber, constr     #-----> Si funciona con tarjetas reales, desactivado
 #FastApi
-from fastapi import FastAPI
-from fastapi import Body, Query, Path, Form, Header, Cookie
+from fastapi import FastAPI, UploadFile
+from fastapi import Body, Query, Path, Form, Header, Cookie, UploadFile, File
 from fastapi import status
 
 app = FastAPI()
@@ -242,3 +238,17 @@ def contact(
     ads: Optional[str] = Cookie(default=None)
 ):
     return user_agent
+
+# Files
+
+@app.post(
+    path="/post-image"
+)
+def post_image(
+    image: UploadFile = File(...)
+):
+    return {
+        "Filename": image.filename,
+        "Format": image.content_type,
+        "Size(kb)": round(len(image.file.read())/1024, ndigits= 2)
+    }
