@@ -129,9 +129,21 @@ class LoginOut(BaseModel):
 @app.get(
     path="/", 
     status_code= status.HTTP_200_OK,
-    tags=["Home"]
+    tags=["Home"],
+    summary="Show the home"
 )
 def home():
+    """
+    Show home
+
+    This path operation show the app home
+
+    Parameters:
+    - Request body parameter:
+        - Does not have any
+    
+    Show the home of the app
+    """
     return {"First API": "Congratulations"}
 
 # Request and Response Body
@@ -140,9 +152,21 @@ def home():
     path="/person/new", 
     response_model=PersonOut,
     status_code=status.HTTP_201_CREATED,
-    tags=["Persons"]
+    tags=["Persons"],
+    summary="Create a person in the app"
 )
 def create_person(person: Person = Body(...)):     #-----> Body es una clase de FastApi que permite decir que un parametro que me llega es de tipo body; (...) parametro obligatorio en fastapi
+    """
+    Create Person
+
+    This path operation creates a person in the app and save the information in the database.
+
+    Parameters:
+    - Request body parameter:
+        - **person: Person** -> A person model with first name, last name, age, birthday, email, hair color and marital status.
+    
+    Returns a person model with first name, last name, age, birthday, email, hair color and marital status.
+    """
     return person
 
 # Validaciones Query Parameters
@@ -150,7 +174,8 @@ def create_person(person: Person = Body(...)):     #-----> Body es una clase de 
 @app.get(
     path="/person/detail",
     status_code=status.HTTP_200_OK,
-    tags=["Persons"]
+    tags=["Persons"],
+    summary="Show a person"
 )    
 def show_person(
     name: Optional[str] = Query(
@@ -168,6 +193,18 @@ def show_person(
         example= 25
          )
 ):
+    """
+    Show Person
+
+    This path operation shows a person in the app.
+
+    Parameters:
+    - Request body parameter:
+        - **name: str** --> Asks a person's name.
+        - **age: str** --> Asks a person's age.
+
+    Returns a dictionary with the person name and age.
+    """
     return {name: age}
 
 # Validaciones: Path Parameters
@@ -177,7 +214,8 @@ persons = [1, 2, 3, 4, 5]
 @app.get(
     path="/person/detail/{person_id}",
     status_code= status.HTTP_200_OK,
-    tags=["Persons"]
+    tags=["Persons"],
+    summary="Show a persons ID"
 )
 def show_person(
     person_id: int = Path(
@@ -186,11 +224,23 @@ def show_person(
         example= 123
     )     
 ):
+    """
+    Show person id
+
+    This path operation shows the person id 
+
+    Parameters:
+    - Request body parameter:
+        - **person_id: int** --> Path client id
+    
+    Returns a dictionary showing that client has been succesfully founded on database or returns a This person doesn't exist message
+    """
+
     if person_id not in persons:
         raise HTTPException(
             status_code= status.HTTP_404_NOT_FOUND,
             detail= "This person doesn't exists!!!"
-        )
+        )        
     return {person_id: "It exists!!"}
 
 # Validaciones: Body Parameters
@@ -198,7 +248,8 @@ def show_person(
 @app.put(
     path="/person/{person_id}",
     status_code= status.HTTP_202_ACCEPTED,
-    tags=["Persons"]
+    tags=["Persons"],
+    summary="Updates a person information"
 )
 def update_person(    
     person_id: int = Path(
@@ -210,7 +261,20 @@ def update_person(
     ),
     person: Person = Body(...),
     Location: Location = Body(...)
-):  
+):
+    """
+    Update a person
+
+    This path operation updates a person information in the app.
+
+    Parameters:
+    - Request body parameter:
+        - **person_id: int** --> An id from person. 
+        - **Location: Location** --> A location model that recieves city, state and country from user.
+
+    Returns a new person model with: new first name, last name, age, birthday, email, hair color and marital status.
+    """
+
     results = person.dict()
     results.update(Location.dict()) 
     return results
@@ -219,12 +283,27 @@ def update_person(
     path="/login",
     response_model= LoginOut,
     status_code= status.HTTP_200_OK,
-    tags=["Home"]
+    tags=["Home"],
+    summary="Login a User"
 )
 def login(
     username: str = Form(...), 
     password: str = Form(...)
     ):
+    """
+    Login
+
+    This path operation login a user in the app.
+
+    Parameters:
+    - Request body parameter:
+        - **username: str** --> Return a model with username.
+        - **password: str** --> Do not return person's password.
+    
+    Sing up a user of the app.
+
+    """
+
     return LoginOut(username=username)
 
 # Cookies and Headers parameters
@@ -232,7 +311,8 @@ def login(
 @app.post(
     path="/contact",     #-----> contact-> endpoint que maneja fastapi y que es un formulario de contacto
     status_code= status.HTTP_200_OK,
-    tags=["Home"]
+    tags=["Home"],
+    summary="User contact information"
 )
 def contact(
     first_name: str = Form(
@@ -253,22 +333,49 @@ def contact(
     user_agent: Optional[str] = Header(default=None),
     ads: Optional[str] = Cookie(default=None)
 ):
+    """
+    Person contac info
+
+    This path operation shows a person contact information.
+
+    Parameters:
+    - Request body parameter:
+        - **first_name: str** --> A formulary with a person's first name.
+        - **last_name: str** --> A formulary with a person's last name.
+        - ** email: EmailStr** --> A formulary with a person's email information.
+        - **message: str** --> A formulary with a message from person.
+        - **user_agent: str** --> Optional, sends a header with default value none.        
+        - **ads : str** --> Tracking cookies for our user.
+
+    Return the person's contact information.
+    """
+    
     return user_agent
 
 # Files
 
 @app.post(
     path="/post-image",
-    tags=["Image"]
+    tags=["Image"],
+    summary="Post an image"
 )
 def post_image(
     image: UploadFile = File(...)
 ):
+    """
+    Post image
+
+    This path operation post an image from person to the app.s
+
+    Parameters:
+    - Request body parameter:
+        - **image: UploadFile** --> Send the image from the person to the app and saves it.
+
+    Upload a file from a person to the app.
+
+    """
     return {
         "Filename": image.filename,
         "Format": image.content_type,
         "Size(kb)": round(len(image.file.read())/1024, ndigits= 2)
     }
-
-
-
