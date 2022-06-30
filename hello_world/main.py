@@ -128,8 +128,9 @@ class LoginOut(BaseModel):
 # Path opetation decorator
 @app.get(
     path="/", 
-    status_code= status.HTTP_200_OK
-    )
+    status_code= status.HTTP_200_OK,
+    tags=["Home"]
+)
 def home():
     return {"First API": "Congratulations"}
 
@@ -138,8 +139,9 @@ def home():
 @app.post(
     path="/person/new", 
     response_model=PersonOut,
-    status_code=status.HTTP_201_CREATED
-    )
+    status_code=status.HTTP_201_CREATED,
+    tags=["Persons"]
+)
 def create_person(person: Person = Body(...)):     #-----> Body es una clase de FastApi que permite decir que un parametro que me llega es de tipo body; (...) parametro obligatorio en fastapi
     return person
 
@@ -147,8 +149,9 @@ def create_person(person: Person = Body(...)):     #-----> Body es una clase de 
 
 @app.get(
     path="/person/detail",
-    status_code=status.HTTP_200_OK
-    )    
+    status_code=status.HTTP_200_OK,
+    tags=["Persons"]
+)    
 def show_person(
     name: Optional[str] = Query(
         None, 
@@ -173,8 +176,9 @@ persons = [1, 2, 3, 4, 5]
 
 @app.get(
     path="/person/detail/{person_id}",
-    status_code= status.HTTP_200_OK
-    )
+    status_code= status.HTTP_200_OK,
+    tags=["Persons"]
+)
 def show_person(
     person_id: int = Path(
         ..., 
@@ -193,8 +197,9 @@ def show_person(
 
 @app.put(
     path="/person/{person_id}",
-    status_code= status.HTTP_202_ACCEPTED
-    )
+    status_code= status.HTTP_202_ACCEPTED,
+    tags=["Persons"]
+)
 def update_person(    
     person_id: int = Path(
         ...,
@@ -213,7 +218,8 @@ def update_person(
 @app.post(
     path="/login",
     response_model= LoginOut,
-    status_code= status.HTTP_200_OK
+    status_code= status.HTTP_200_OK,
+    tags=["Home"]
 )
 def login(
     username: str = Form(...), 
@@ -225,7 +231,8 @@ def login(
 
 @app.post(
     path="/contact",     #-----> contact-> endpoint que maneja fastapi y que es un formulario de contacto
-    status_code= status.HTTP_200_OK
+    status_code= status.HTTP_200_OK,
+    tags=["Home"]
 )
 def contact(
     first_name: str = Form(
@@ -251,7 +258,8 @@ def contact(
 # Files
 
 @app.post(
-    path="/post-image"
+    path="/post-image",
+    tags=["Image"]
 )
 def post_image(
     image: UploadFile = File(...)
@@ -262,5 +270,5 @@ def post_image(
         "Size(kb)": round(len(image.file.read())/1024, ndigits= 2)
     }
 
-# HTTP Exceptions
+
 
