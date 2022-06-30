@@ -1,15 +1,18 @@
 #Python
 from typing import Optional
 from enum import Enum     #-----> Nos ayuda para crear enumeraciones de strings
-#Pydantic
-from pydantic import BaseModel, EmailStr, PastDate, Field
-# from pydantic.types import PaymentCardBrand, PaymentCardNumber, constr     #-----> Si funciona con tarjetas reales, desactivado
-#FastApi
-from fastapi import FastAPI, UploadFile
-from fastapi import Body, Query, Path, Form, Header, Cookie, UploadFile, File
-from fastapi import status
 
-app = FastAPI()
+#Pydantic
+from pydantic import BaseModel
+from pydantic import EmailStr, PastDate, Field
+# from pydantic.types import PaymentCardBrand, PaymentCardNumber, constr     #-----> Si funciona con tarjetas reales, desactivado
+
+#FastApi
+from fastapi import FastAPI
+from fastapi import status, UploadFile, HTTPException      #-----> Clases de entradas de tipos
+from fastapi import Body, Query, Path, Form, Header, Cookie, File     #-----> Funciones de entradas de tipos
+
+app = FastAPI()     #-----> Siempre debe ir asi en FastApi 
 
 #Models
 
@@ -164,12 +167,13 @@ def show_person(
 ):
     return {name: age}
 
-
 # Validaciones: Path Parameters
+
+persons = [1, 2, 3, 4, 5]
 
 @app.get(
     path="/person/detail/{person_id}",
-    status_code= status.HTTP_302_FOUND
+    status_code= status.HTTP_200_OK
     )
 def show_person(
     person_id: int = Path(
@@ -178,6 +182,11 @@ def show_person(
         example= 123
     )     
 ):
+    if person_id not in persons:
+        raise HTTPException(
+            status_code= status.HTTP_404_NOT_FOUND,
+            detail= "This person doesn't exists!!!"
+        )
     return {person_id: "It exists!!"}
 
 # Validaciones: Body Parameters
@@ -252,3 +261,6 @@ def post_image(
         "Format": image.content_type,
         "Size(kb)": round(len(image.file.read())/1024, ndigits= 2)
     }
+
+# HTTP Exceptions
+
