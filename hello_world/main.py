@@ -175,7 +175,8 @@ def create_person(person: Person = Body(...)):     #-----> Body es una clase de 
     path="/person/detail",
     status_code=status.HTTP_200_OK,
     tags=["Persons"],
-    summary="Show a person"
+    summary="Show a person",
+    deprecated=True
 )    
 def show_person(
     name: Optional[str] = Query(
@@ -349,7 +350,7 @@ def contact(
 
     Return the person's contact information.
     """
-    
+
     return user_agent
 
 # Files
