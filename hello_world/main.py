@@ -9,8 +9,8 @@ from pydantic import Field
 from pydantic.types import PaymentCardBrand, PaymentCardNumber, constr     #-----> Si funciona con tarjetas reales, desactivado
 
 #FastApi
-from fastapi import FastAPI
-from fastapi import Body, Query, Path
+from fastapi import FastAPI, Form
+from fastapi import Body, Query, Path, Form
 from fastapi import status
 
 app = FastAPI()
@@ -116,6 +116,16 @@ class Person(PersonBase):
 class PersonOut(PersonBase):    
     pass
 
+class LoginOut(BaseModel):
+    username: str = Field(
+        ...,
+        max_length= 20,
+        example = "Pedro2022"
+        )
+    message: str = Field(
+        default= "Login Successfully!!"
+        )
+
 # Path opetation decorator
 @app.get(
     path="/", 
@@ -180,7 +190,7 @@ def show_person(
     path="/person/{person_id}",
     status_code= status.HTTP_202_ACCEPTED
     )
-def update_person(
+def update_person(    
     person_id: int = Path(
         ...,
         title="Person ID",
@@ -194,3 +204,14 @@ def update_person(
     results = person.dict()
     results.update(Location.dict()) 
     return results
+
+@app.post(
+    path="/login",
+    response_model= LoginOut,
+    status_code= status.HTTP_200_OK
+)
+def login(
+    username: str = Form(...), 
+    password: str = Form(...)
+    ):
+    return LoginOut(username=username)
