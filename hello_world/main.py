@@ -9,8 +9,8 @@ from pydantic import Field
 from pydantic.types import PaymentCardBrand, PaymentCardNumber, constr     #-----> Si funciona con tarjetas reales, desactivado
 
 #FastApi
-from fastapi import FastAPI, Form
-from fastapi import Body, Query, Path, Form
+from fastapi import FastAPI
+from fastapi import Body, Query, Path, Form, Header, Cookie
 from fastapi import status
 
 app = FastAPI()
@@ -215,3 +215,30 @@ def login(
     password: str = Form(...)
     ):
     return LoginOut(username=username)
+
+# Cookies and Headers parameters
+
+@app.post(
+    path="/contact",     #-----> contact-> endpoint que maneja fastapi y que es un formulario de contacto
+    status_code= status.HTTP_200_OK
+)
+def contact(
+    first_name: str = Form(
+        ...,
+        max_length= 20,
+        min_length= 1
+    ),
+    last_name: str = Form(
+        ...,
+        max_length= 20,
+        min_length= 1
+    ),
+    email: EmailStr = Form(...),
+    mesagge: str = Form(
+        ...,
+        min_length= 20
+    ),
+    user_agent: Optional[str] = Header(default=None),
+    ads: Optional[str] = Cookie(default=None)
+):
+    return user_agent
